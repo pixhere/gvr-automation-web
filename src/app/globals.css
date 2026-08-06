@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface text-ink font-body text-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading text-navy;
+  }
+
+  /* Visible, high-contrast focus states everywhere — accessibility is not optional. */
+  :focus-visible {
+    outline: 3px solid #22c55e;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: #22c55e;
+    color: #ffffff;
+  }
+}
+
+@layer utilities {
+  /* Revision #1: lg padding was 16px (smaller than the md value of 40px)
+     because of the 8px-grid spacing override below — a real bug that made
+     wide screens feel tighter than tablets. Fixed to increase monotonically. */
+  .container-page {
+    @apply mx-auto w-full max-w-container px-6 md:px-10 lg:px-20;
+  }
+
+  .prose-copy {
+    @apply max-w-prose leading-relaxed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
