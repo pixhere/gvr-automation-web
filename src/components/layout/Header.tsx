@@ -93,7 +93,7 @@ export function Header() {
           menuOpen ? "max-h-[480px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        <nav aria-label="Mobile" className="container-page flex flex-col gap-1 py-4">
+        <nav aria-label="Mobile" className="container-page flex flex-col gap-2 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}

@@ -3,12 +3,18 @@
 @tailwind utilities;
 
 @layer base {
+  /* Revision #4: overflow-x: hidden added as a defensive guard against
+     horizontal scroll on mobile — no single element was found forcing
+     overflow, but this is cheap insurance against any decorative/
+     absolutely-positioned element causing it in the future. */
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-surface text-ink font-body text-body antialiased;
+    overflow-x: hidden;
   }
 
   h1,

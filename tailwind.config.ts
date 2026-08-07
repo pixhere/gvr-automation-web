@@ -69,16 +69,23 @@ const config: Config = {
         small: ["16px", { lineHeight: "1.55", fontWeight: "400" }],
         caption: ["14px", { lineHeight: "1.5", fontWeight: "500" }],
       },
-      spacing: {
-        "8": "8px",
-        "16": "16px",
-        "24": "24px",
-        "32": "32px",
-        "48": "48px",
-        "64": "64px",
-        "96": "96px",
-        "128": "128px",
-      },
+      // Revision #4 root-cause fix: this block used to redefine spacing keys
+      // "8"/"16"/"24"/"32"/"48"/"64"/"96" to literal pixel values equal to
+      // their own key names (e.g. spacing-8 = 8px). That silently collided
+      // with Tailwind's default rem-based scale for those exact numbers
+      // (default spacing-8 is 2rem/32px, spacing-16 is 4rem/64px, spacing-96
+      // is 24rem/384px, etc.), so every `mt-8`, `gap-8`, `p-8`, `h-8`,
+      // `py-16`, `px-8`, `max-h-96`-style class anywhere in the codebase
+      // rendered far smaller than the author obviously intended. This has
+      // been the root cause of a recurring class of "cramped spacing" /
+      // "clipped menu" / "invisible padding" bugs patched one-off across
+      // three revisions (mobile nav menu height, trust bar gaps, hero score
+      // badge size, timeline icon size, section padding, and — discovered in
+      // this revision's full-site audit — button horizontal padding, footer
+      // paragraph margins, pricing card grid gaps, and more). Removing this
+      // override restores Tailwind's default scale for those keys, which
+      // fixes every one of those instances at once without touching the
+      // component files that were written assuming the standard scale.
       borderRadius: {
         btn: "16px",
         "btn-lg": "24px",

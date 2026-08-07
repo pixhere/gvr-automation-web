@@ -79,18 +79,26 @@ export default function HomePage() {
       {/* Revision #1: top padding was pt-16, which the 8px-grid override
           renders as only 16px — the hero was sitting almost flush under the
           nav. Fixed with safe (non-overridden) spacing values throughout. */}
-      <section className="relative overflow-hidden bg-navy pb-28 pt-20 md:pb-36 md:pt-28">
+      {/* Revision #4: dropped `overflow-hidden` from the section — the
+          decorative gradient below is already pinned to the section's exact
+          box via inset-0, so the section-level overflow clip was doing
+          nothing except being one more "unnecessary overflow setting." */}
+      <section className="relative bg-navy pb-28 pt-20 md:pb-36 md:pt-28">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-40"
+          className="pointer-events-none absolute inset-0 overflow-hidden opacity-40"
           style={{
             background:
               "radial-gradient(circle at 20% 20%, rgba(34,197,94,0.15), transparent 45%), radial-gradient(circle at 80% 0%, rgba(255,255,255,0.08), transparent 40%)",
           }}
         />
-        <div className="container-page relative grid grid-cols-1 items-center gap-14 md:grid-cols-2 md:gap-20">
+        {/* Revision #4: mobile-only rhythm tightened (badge/button/checklist/
+            disclaimer margins, and the grid gap) so the Business Growth Score
+            preview card comes into view sooner on mobile without requiring
+            several scrolls first. Desktop (md:) values are untouched. */}
+        <div className="container-page relative grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-20">
           <div>
-            <Badge tone="green" className="mb-10">
+            <Badge tone="green" className="mb-6 md:mb-10">
               AI Growth Platform for Local Businesses
             </Badge>
             <h1 className="text-h1-mobile md:text-h1 font-heading font-extrabold text-white">
@@ -107,18 +115,26 @@ export default function HomePage() {
               repetitive work, and free up more time — so you can focus on growing your business
               instead of constantly managing it.
             </p>
-            <div className="mt-12 flex flex-col gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row md:mt-12">
               <Button href={primaryCta.href}>{primaryCta.label}</Button>
-              <Button href={secondaryCta.href} variant="secondary" className="!border-white !text-white hover:!bg-white/10">
+              {/* Revision #4 bugfix: the `secondary` variant's own bg-white
+                  was never overridden here, so white text was rendering on a
+                  white background — a completely invisible button. Added
+                  !bg-transparent so it reads as an outline button on navy. */}
+              <Button
+                href={secondaryCta.href}
+                variant="secondary"
+                className="!border-white !bg-transparent !text-white hover:!bg-white/10"
+              >
                 {secondaryCta.label}
               </Button>
             </div>
-            <ul className="mt-10 flex flex-col gap-3 text-small text-white/80 sm:flex-row sm:gap-10">
+            <ul className="mt-8 flex flex-col gap-3 text-small text-white/80 sm:flex-row sm:gap-10 md:mt-10">
               <li>✓ Takes less than 3 minutes</li>
               <li>✓ Personalized business insights</li>
               <li>✓ No obligation</li>
             </ul>
-            <p className="mt-6 max-w-prose text-caption text-white/50">
+            <p className="mt-4 max-w-prose text-caption text-white/50 md:mt-6">
               We don&rsquo;t believe in selling software before understanding your business.
               Every recommendation starts with a conversation.
             </p>

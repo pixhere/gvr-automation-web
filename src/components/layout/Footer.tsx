@@ -31,29 +31,39 @@ export function Footer() {
     // the brand palette.
     <footer className="bg-navy-450 text-white">
       <div className="container-page py-20">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+        {/* Revision #4: centered on mobile (stacked single column), left-
+            aligned on desktop exactly as before — text-align cascades to
+            headings/paragraphs/links automatically; flex rows below get an
+            explicit justify-center to match. */}
+        <div className="grid grid-cols-1 gap-12 text-center md:grid-cols-4 md:text-left">
           <div>
-            {/* Revision #3: logo bumped up and given its own padded, subtly
-                lighter chip so it can't get lost against the footer
-                background — addresses the "logo blending in" report. */}
-            <div className="inline-flex rounded-input bg-white/10 p-4">
-              <Logo variant="wordmark" imgClassName="h-12 w-auto brightness-0 invert" />
+            {/* Revision #4 bugfix: brightness-0 + invert was flattening the
+                logo's actual gray/green/black artwork into a solid white
+                silhouette — unreadable, since this is a multi-tone raster
+                logo, not a simple flat icon. Root cause removed: this now
+                renders the exact same unmodified asset as the header, just
+                larger, sitting on a light chip for contrast against navy. */}
+            <div className="inline-flex rounded-input bg-white/90 p-4">
+              <Logo variant="wordmark" imgClassName="h-12 w-auto" />
             </div>
-            <p className="mt-5 max-w-xs text-small text-white/70 leading-relaxed">
+            {/* Revision #4: mx-auto centers these width-constrained paragraphs
+                as blocks on mobile (matching the centered text inside them);
+                md:mx-0 restores the original left-anchored desktop layout. */}
+            <p className="mx-auto mt-5 max-w-xs text-small text-white/70 leading-relaxed md:mx-0">
               Helping local businesses automate repetitive work, capture more leads, and grow
               with practical AI solutions.
             </p>
-            <p className="mt-4 max-w-xs text-caption text-white/50">
+            <p className="mx-auto mt-4 max-w-xs text-caption text-white/50 md:mx-0">
               Based in Harrisburg, PA
               <br />
               Proudly serving local businesses across Pennsylvania and throughout the United
               States.
             </p>
             {/* Revision #2: business hours added to footer per feedback. */}
-            <p className="mt-4 max-w-xs text-caption text-white/50">
+            <p className="mx-auto mt-4 max-w-xs text-caption text-white/50 md:mx-0">
               Mon&ndash;Fri, 9am&ndash;5pm ET
             </p>
-            <div className="mt-6 flex gap-4">
+            <div className="mt-6 flex justify-center gap-4 md:justify-start">
               {siteConfig.social.facebook && (
                 <a
                   href={siteConfig.social.facebook}
@@ -121,15 +131,28 @@ export function Footer() {
             <p className="mt-4 text-small text-white/80">
               Book a free strategy session and let&rsquo;s talk about your business.
             </p>
+            {/* Revision #4: Button is inline-flex, so it centers automatically
+                under the ancestor's text-center on mobile; md:text-left
+                restores the original desktop alignment untouched. */}
             <Button href={primaryCta.href} size="sm" className="mt-4">
               Book Strategy Session
             </Button>
+            {/* Revision #4: phone/email rows are flex (block-level), so they
+                need their own justify-center to match the mobile-centered
+                layout, plus a min-h-[44px] tap target so they're easy to tap
+                on mobile per the ticket's requirement. */}
             <div className="mt-6 space-y-2 text-small text-white/70">
-              <a href={`tel:${siteConfig.contact.phoneHref}`} className="flex items-center gap-2 hover:text-white">
+              <a
+                href={`tel:${siteConfig.contact.phoneHref}`}
+                className="flex min-h-[44px] items-center justify-center gap-2 hover:text-white md:justify-start"
+              >
                 <Phone className="h-4 w-4" aria-hidden="true" />
                 {siteConfig.contact.phone}
               </a>
-              <a href={`mailto:${siteConfig.contact.email}`} className="flex items-center gap-2 hover:text-white">
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="flex min-h-[44px] items-center justify-center gap-2 hover:text-white md:justify-start"
+              >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 {siteConfig.contact.email}
               </a>
