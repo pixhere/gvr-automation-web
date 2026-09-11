@@ -16,21 +16,29 @@ export function CalendarEmbed() {
   const url = siteConfig.booking.calendarEmbedUrl;
 
   if (!url) {
+    // Customer-facing fallback — shown until the GHL calendar embed URL is
+    // set (see /README.md "Connecting GoHighLevel"). No internal config
+    // details are ever surfaced here; visitors only see a polished,
+    // on-brand invitation to book directly.
     return (
       <Card className="mx-auto max-w-lg text-center">
         <CalendarClock className="mx-auto h-10 w-10 text-green-hover" aria-hidden="true" />
         <h3 className="mt-4 font-heading text-h4-mobile font-bold text-navy">
-          Booking Calendar — Not Yet Connected
+          Let&rsquo;s Find You a Time
         </h3>
         <p className="mt-3 text-small text-ink-secondary">
-          Once <code className="rounded bg-navy/5 px-1.5 py-0.5">NEXT_PUBLIC_GHL_CALENDAR_URL</code>{" "}
-          is set to your GoHighLevel calendar embed link, this space becomes a live, responsive
-          booking calendar with timezone detection and confirmation. In the meantime, reach us
-          directly:
+          Online scheduling is being finished up. In the meantime, call or email us and
+          we&rsquo;ll get your Free Strategy Session booked personally — usually within one
+          business day.
         </p>
-        <Button href={`tel:${siteConfig.contact.phoneHref}`} className="mt-6">
-          Call {siteConfig.contact.phone}
-        </Button>
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button href={`tel:${siteConfig.contact.phoneHref}`}>
+            Call {siteConfig.contact.phone}
+          </Button>
+          <Button href={`mailto:${siteConfig.contact.email}`} variant="secondary">
+            Email Us
+          </Button>
+        </div>
       </Card>
     );
   }

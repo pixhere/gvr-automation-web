@@ -33,14 +33,12 @@ import {
   systemsChecklist,
 } from "@/lib/assessment/options";
 import { calculateAssessmentResult } from "@/lib/assessment/scoring";
-import { buildGhlPayload } from "@/lib/assessment/ghl-payload";
 import {
   saveAssessmentProgress,
   loadAssessmentProgress,
   clearAssessmentProgress,
   RESULT_SESSION_KEY,
 } from "@/lib/assessment/storage";
-import { siteConfig } from "@/lib/site-config";
 
 const TOTAL_STEPS = 9;
 
@@ -102,19 +100,15 @@ export function AssessmentWizard() {
     setError(null);
     try {
       const result = calculateAssessmentResult(answers);
-      const payload = buildGhlPayload(answers, result);
 
-      if (siteConfig.assessment.submitEndpoint) {
-        const res = await fetch(siteConfig.assessment.submitEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error(`Submission failed with status ${res.status}`);
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn("[Assessment] No submitEndpoint configured — logging payload instead:", payload);
-      }
+      // Forwarded server-side to the GHL webhook — see
+      // /src/app/api/assessment/submit/route.ts.
+      const res = await fetch("/api/assessment/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers, result }),
+      });
+      if (!res.ok) throw new Error(`Submission failed with status ${res.status}`);
 
       try {
         window.sessionStorage.setItem(

@@ -25,11 +25,10 @@ const inputClasses =
   "w-full rounded-input border border-border bg-white px-4 py-3 text-body text-ink placeholder:text-ink-secondary/60 focus-visible:outline-none";
 
 /**
- * Contact form. Submits to `siteConfig.contactForm.submitEndpoint` when
- * configured (a GoHighLevel inbound webhook or similar form-handling
- * service). Until that env var is set, submissions are logged to the
- * console and the user still sees a normal success state — so the page
- * never appears broken, but nothing is silently lost either.
+ * Contact form. Submits to /api/contact/submit, which forwards the lead
+ * server-side to the GoHighLevel webhook (siteConfig.contactForm.submitEndpoint).
+ * GHL's own workflow (Internal Notification action) is what emails/texts
+ * you — see /README.md "Connecting GoHighLevel".
  */
 export function ContactForm() {
   const {
@@ -44,19 +43,14 @@ export function ContactForm() {
   const onSubmit = async (values: ContactFormValues) => {
     setStatus("idle");
     try {
-      const endpoint = siteConfig.contactForm.submitEndpoint;
-      if (endpoint) {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
-        if (!res.ok) throw new Error(`Submission failed with status ${res.status}`);
-      } else {
-        // No webhook configured yet — see README "Connecting GoHighLevel".
-        // eslint-disable-next-line no-console
-        console.warn("[ContactForm] No submitEndpoint configured — logging submission instead:", values);
-      }
+      // Forwarded server-side to the GHL webhook — see
+      // /src/app/api/contact/submit/route.ts.
+      const res = await fetch("/api/contact/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) throw new Error(`Submission failed with status ${res.status}`);
       setStatus("success");
       reset();
     } catch (error) {

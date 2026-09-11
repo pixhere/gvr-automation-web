@@ -54,15 +54,28 @@ real yet:
 cp .env.example .env.local
 ```
 
-## Connecting GoHighLevel
+## Connecting GoHighLevel (required — do this first)
+
+Both the Business Growth Assessment and the Contact form submit to internal
+API routes (`/api/assessment/submit`, `/api/contact/submit`) that forward the
+lead server-side to a GoHighLevel inbound webhook. GHL — not this codebase —
+is what actually notifies you (email/SMS), via a workflow action. Without
+this set up, submissions are only written to server logs and nobody is
+notified.
 
 1. Follow `GHL_PLAYBOOK.md` top to bottom to build the pipeline, tags, custom
    fields, workflows, and calendars inside your GHL sub-account.
-2. Set `NEXT_PUBLIC_ASSESSMENT_WEBHOOK_URL` and `NEXT_PUBLIC_CONTACT_WEBHOOK_URL`
-   to the inbound webhook URLs GHL gives you.
-3. Set `NEXT_PUBLIC_GHL_CALENDAR_URL` to your Business Strategy Session calendar's
+2. In GHL: **Automation → Workflows → New Workflow**, trigger type
+   **"Inbound Webhook"**. GHL gives you a unique POST URL.
+3. Set `NEXT_PUBLIC_ASSESSMENT_WEBHOOK_URL` and `NEXT_PUBLIC_CONTACT_WEBHOOK_URL`
+   to those webhook URLs. These are read server-side by the API routes above.
+4. In each workflow: add a **"Find/Create Contact"** action mapped from the
+   payload's `contact.*` fields, then an **"Internal Notification"** action
+   (email and/or SMS to yourself) — see `GHL_PLAYBOOK.md` §5 step 9. This is
+   the step that actually gets you notified.
+5. Set `NEXT_PUBLIC_GHL_CALENDAR_URL` to your Business Strategy Session calendar's
    embed URL.
-4. Submit one real test assessment on the live site and confirm it lands
+6. Submit one real test assessment on the live site and confirm it lands
    correctly in GHL before considering this connected.
 
 ## Before Launch — full checklist
