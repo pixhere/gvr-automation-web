@@ -1,5 +1,42 @@
 import type { AssessmentAnswers, AssessmentResult } from "@/types/assessment";
 
+const tierLabel: Record<"green" | "yellow" | "red", string> = {
+  green: "Strong",
+  yellow: "Growth Opportunity",
+  red: "High Opportunity",
+};
+
+/**
+ * Builds a single, pre-formatted plain-text report block containing the
+ * full category-by-category breakdown and top recommendations — the same
+ * data shown on the live results page. Sending this as ONE custom field
+ * means GHL notification/email templates only need one merge tag to show
+ * the "whole picture," instead of maintaining a separate custom field for
+ * every category score and recommendation individually.
+ */
+export function buildAssessmentReportText(answers: AssessmentAnswers, result: AssessmentResult): string {
+  const categoryLines = result.categories
+    .map((c) => `- ${c.label}: ${c.score}/100 (${tierLabel[c.tier]})`)
+    .join("\n");
+
+  const recommendationLines = result.recommendations
+    .map((r, i) => `${i + 1}. ${r.title} — ${r.impact}\n   ${r.body}`)
+    .join("\n\n");
+
+  return [
+    `BUSINESS GROWTH ASSESSMENT RESULTS`,
+    ``,
+    `Overall Score: ${result.overallScore}/100 — ${result.overallLabel}`,
+    `Estimated Weekly Hours Saved: ${result.estimatedWeeklyHoursSaved}`,
+    ``,
+    `Category Breakdown:`,
+    categoryLines,
+    ``,
+    `Top Recommendations:`,
+    recommendationLines,
+  ].join("\n");
+}
+
 /**
  * Maps a completed assessment into the tag/field structure described in
  * the blueprint (Phase 3 "Data Structure" + Phase 5 "Custom Fields").
@@ -54,6 +91,7 @@ export function buildGhlPayload(answers: AssessmentAnswers, result: AssessmentRe
       biggest_90_day_opportunity: answers.biggestOpportunity90Days,
       owner_stress_level: ownerStressLevel,
       estimated_weekly_hours_saved: result.estimatedWeeklyHoursSaved,
+      full_report: buildAssessmentReportText(answers, result),
     },
     rawAnswers: answers,
     result,
