@@ -15,26 +15,33 @@ const tierLabel: Record<"green" | "yellow" | "red", string> = {
  * every category score and recommendation individually.
  */
 export function buildAssessmentReportText(answers: AssessmentAnswers, result: AssessmentResult): string {
+  // Uses <br> instead of plain "\n" line breaks — GHL renders this field
+  // inside an HTML email, and HTML collapses plain newlines/whitespace,
+  // so a "\n"-only version renders as one run-on paragraph. <br> forces
+  // an actual visible line break in the rendered email.
   const categoryLines = result.categories
-    .map((c) => `- ${c.label}: ${c.score}/100 (${tierLabel[c.tier]})`)
-    .join("\n");
+    .map((c) => `&nbsp;&nbsp;&bull; ${c.label}: ${c.score}/100 (${tierLabel[c.tier]})`)
+    .join("<br>");
 
   const recommendationLines = result.recommendations
-    .map((r, i) => `${i + 1}. ${r.title} — ${r.impact}\n   ${r.body}`)
-    .join("\n\n");
+    .map(
+      (r, i) =>
+        `${i + 1}. <strong>${r.title}</strong> &mdash; ${r.impact}<br>&nbsp;&nbsp;&nbsp;${r.body}`
+    )
+    .join("<br><br>");
 
   return [
-    `BUSINESS GROWTH ASSESSMENT RESULTS`,
+    `<strong>BUSINESS GROWTH ASSESSMENT RESULTS</strong>`,
     ``,
-    `Overall Score: ${result.overallScore}/100 — ${result.overallLabel}`,
+    `Overall Score: <strong>${result.overallScore}/100 — ${result.overallLabel}</strong>`,
     `Estimated Weekly Hours Saved: ${result.estimatedWeeklyHoursSaved}`,
     ``,
-    `Category Breakdown:`,
+    `<strong>Category Breakdown:</strong>`,
     categoryLines,
     ``,
-    `Top Recommendations:`,
+    `<strong>Top Recommendations:</strong>`,
     recommendationLines,
-  ].join("\n");
+  ].join("<br>");
 }
 
 /**
